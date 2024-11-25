@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotateSpeed;
+    [SerializeField] private int health;
 
     private InputManager input;
        
@@ -20,20 +21,30 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        m_Rigidbody.rotation += -rotateSpeed;
+        m_Rigidbody.rotation += rotateSpeed;
 
         transform.Translate(input.moveValue * moveSpeed * Time.deltaTime, Space.World);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //transform.position = Vector3.zero;
+        if (collision.gameObject.name == "Projectile") {
+            return;
+        }
 
-        Vector2 bounceDirection = collision.contacts[0].normal;
-        m_Rigidbody.AddForce(bounceDirection * 5f, ForceMode2D.Impulse);
-        Invoke("StopForce", 0.5f);
+        transform.position = Vector3.zero;
 
-        Debug.Log("we hit something");
+        health -= 1;
+        if (health == 0)
+        {
+            // end game
+        }
+
+        //Vector2 bounceDirection = collision.contacts[0].normal;
+        //m_Rigidbody.AddForce(bounceDirection * 5f, ForceMode2D.Impulse);
+        //Invoke("StopForce", 0.5f);
+
+        Debug.Log("we hit: " + collision.gameObject.name);
     }
 
     private void StopForce()
