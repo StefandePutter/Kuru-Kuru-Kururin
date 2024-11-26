@@ -8,9 +8,17 @@ public class ProjectileSpawner : MonoBehaviour
 
     public IObjectPool<Projectile> projectilePool;
 
+    private GameObject parent;
+
     private void Awake()
     {
         projectilePool = new ObjectPool<Projectile>(CreateProjectile, OnGetProjectileFromPool, OnReturnProjectileToPool, OnDestroyProjectile, true, 26, 52);
+
+        // making a parent for storing the pool
+        parent = new GameObject
+        {
+            name = "Projectiles"
+        };
     }
 
     // what to do when creating new object for the pool
@@ -18,6 +26,8 @@ public class ProjectileSpawner : MonoBehaviour
     {
         Projectile projectileInstance = Instantiate(projectilePrefab);
         projectileInstance.ProjectilePool = projectilePool;
+
+        projectileInstance.gameObject.transform.parent = parent.transform;
 
         return projectileInstance;
     }

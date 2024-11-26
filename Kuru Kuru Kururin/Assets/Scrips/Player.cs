@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
         }
 
         projectileSpawner.projectilePool.Clear();
-        transform.position = Vector3.zero;
+        transform.position = new Vector3(-3,0,0);
 
         health -= 1;
         if (health == 0)
