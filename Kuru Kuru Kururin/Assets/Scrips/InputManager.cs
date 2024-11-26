@@ -8,7 +8,7 @@ public class InputManager : MonoBehaviour
     private Controls m_Controls;
 
     public Vector2 moveValue;
-    public bool isSpecial = false;
+    public bool isUsingSpecial = false;
 
     private void Awake()
     {
@@ -38,6 +38,6 @@ public class InputManager : MonoBehaviour
     private void flipSpecialBool(CallbackContext _context)
     {
         Debug.Log("used Special attack");
-        isSpecial = !isSpecial;
+        isUsingSpecial = !isUsingSpecial;
     }
 }

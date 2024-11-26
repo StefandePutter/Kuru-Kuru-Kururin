@@ -7,7 +7,14 @@ public class Player : MonoBehaviour
     [SerializeField] private float rotateSpeed;
     [SerializeField] private int health;
 
+    private float cooldownWindow = 2f;
+    private float cooldownTime;
+
+    [SerializeField] private Transform[] turrets = new Transform[26];
+
     private InputManager input;
+
+    private ProjectileSpawner projectileSpawner;
        
     private Rigidbody2D m_Rigidbody;
 
@@ -17,21 +24,46 @@ public class Player : MonoBehaviour
 
         GameObject inp = GameObject.Find("InputManager");
         input = inp.GetComponent<InputManager>();
+
+        projectileSpawner = GetComponent<ProjectileSpawner>();
+
+        int i = 0;
+        foreach (Transform child in transform)
+        {
+            foreach (Transform turret in child)
+            {
+                if (turret.name == "Square")
+                {
+                    turrets[i] = turret;
+                    i++;
+                }
+            }
+        }
     }
 
     private void FixedUpdate()
     {
         m_Rigidbody.rotation += rotateSpeed;
 
-        transform.Translate(input.moveValue * moveSpeed * Time.deltaTime, Space.World);
+        transform.Translate(moveSpeed * Time.deltaTime * input.moveValue, Space.World);
+
+        // if player is using special and cooldown is over
+        if (input.isUsingSpecial && Time.time > cooldownTime)
+        {
+            Special();
+
+            cooldownTime = Time.time + cooldownWindow;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.name == "Projectile") {
+        if (collision.gameObject.name == "Projectile")
+        {
             return;
         }
 
+        projectileSpawner.projectilePool.Clear();
         transform.position = Vector3.zero;
 
         health -= 1;
@@ -40,15 +72,19 @@ public class Player : MonoBehaviour
             // end game
         }
 
-        //Vector2 bounceDirection = collision.contacts[0].normal;
-        //m_Rigidbody.AddForce(bounceDirection * 5f, ForceMode2D.Impulse);
-        //Invoke("StopForce", 0.5f);
-
         Debug.Log("we hit: " + collision.gameObject.name);
     }
 
-    private void StopForce()
+    private void Special()
     {
-        m_Rigidbody.linearVelocity = Vector2.zero;
+        Debug.Log("doing special attack");
+        foreach (Transform turret in turrets) 
+        {
+            Projectile projectile = projectileSpawner.projectilePool.Get();
+            if (projectile != null)
+            {
+                projectile.transform.SetPositionAndRotation(turret.position, turret.rotation);
+            }
+        }
     }
 }
