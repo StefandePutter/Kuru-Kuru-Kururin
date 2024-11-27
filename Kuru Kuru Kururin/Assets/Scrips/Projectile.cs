@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -7,6 +9,8 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private float timeoutDelay = 2f;
+
+    private float randomRotation;
 
     private IObjectPool<Projectile> projectilePool;
 
@@ -18,11 +22,16 @@ public class Projectile : MonoBehaviour
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody2D>();
+
+        randomRotation = UnityEngine.Random.Range(-10f, 10f);
     }
 
     // gets called after Awake and every time on enable
-    private void OnEnable()
+    public void Initialize(Transform turret)
     {
+        turret.Rotate(new Vector3(0,0,randomRotation));
+        transform.SetPositionAndRotation(turret.position, turret.rotation);
+        
         m_Rigidbody.AddForce(transform.right * speed);
 
         StartCoroutine(DisableAfterSeconds(timeoutDelay));
