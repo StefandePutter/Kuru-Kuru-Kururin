@@ -37,7 +37,6 @@ public class InputManager : MonoBehaviour
 
     private void flipSpecialBool(CallbackContext _context)
     {
-        Debug.Log("used Special attack");
         isUsingSpecial = !isUsingSpecial;
     }
 }

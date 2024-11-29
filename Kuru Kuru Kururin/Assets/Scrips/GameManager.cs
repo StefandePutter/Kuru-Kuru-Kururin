@@ -30,11 +30,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (player.hasDied)
+        // check player
+        if (player.state == PlayerState.died)
         {
             GameOver();
         }
-        if (player.hasWon)
+        if (player.state == PlayerState.won)
         {
             Won();
         }
@@ -42,8 +43,12 @@ public class GameManager : MonoBehaviour
         if (gameState == GameState.gameOver)
         {
             if (inputManager.isUsingSpecial) 
-            {
-                SceneManager.LoadScene("Game");
+            {                
+                gameOverScreen.SetActive(false);
+                
+                player.Respawn();
+
+                gameState = GameState.playing;
             }
         }
 
@@ -51,7 +56,18 @@ public class GameManager : MonoBehaviour
         {
             if (inputManager.isUsingSpecial)
             {
-                SceneManager.LoadScene("Menu");
+                int sceneAmount = SceneManager.sceneCountInBuildSettings;
+                int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+                if (currentSceneIndex == sceneAmount-1)
+                {
+                    SceneManager.LoadScene("Menu");
+                }
+                else
+                {
+                    SceneManager.LoadScene(currentSceneIndex+1);
+                }
+
             }
         }
     }
@@ -66,7 +82,12 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         gameState = GameState.gameOver;
-
+        
         gameOverScreen.SetActive(true);
+
+        // to show school what i had first
+        // reload current scene
+        // string currentSceneName = SceneManager.GetActiveScene().name;
+        // SceneManager.LoadScene(currentSceneName);
     }
 }

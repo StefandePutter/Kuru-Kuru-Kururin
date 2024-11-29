@@ -12,7 +12,7 @@ public class ProjectileSpawner : MonoBehaviour
 
     private void Awake()
     {
-        projectilePool = new ObjectPool<Projectile>(CreateProjectile, OnGetProjectileFromPool, OnReturnProjectileToPool, OnDestroyProjectile, true, 26, 52);
+        projectilePool = new ObjectPool<Projectile>(CreateProjectile, OnGetProjectileFromPool, OnReturnProjectileToPool, OnDestroyProjectile, true, 28, 56);
 
         // making a parent for storing the pool
         parent = new GameObject

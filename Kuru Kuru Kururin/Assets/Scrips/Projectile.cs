@@ -18,7 +18,6 @@ public class Projectile : MonoBehaviour
 
     private Rigidbody2D m_Rigidbody;
 
-    // has to be awake or onEnable will try to use object that isnt assigned yet
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody2D>();
@@ -29,22 +28,27 @@ public class Projectile : MonoBehaviour
     // gets called after Awake and every time on enable
     public void Initialize(Transform turret)
     {
+        // rotate the bullet a little to create a more chaotic pattern
         turret.Rotate(new Vector3(0,0,randomRotation));
         transform.SetPositionAndRotation(turret.position, turret.rotation);
         
         m_Rigidbody.AddForce(transform.right * speed);
 
+        // start a coroutine which is an asynchronous function that can also
+        // await part of its execution until certain conditions are met
         StartCoroutine(DisableAfterSeconds(timeoutDelay));
     }
 
-    // disable object after 2 seconds
+    // coroutines are defined with an IEnumerator has to be called with StartCoroutine
     IEnumerator DisableAfterSeconds(float seconds)
     {
+        // wait until time have gone by
         yield return new WaitForSeconds(seconds);
 
         m_Rigidbody.linearVelocity = Vector3.zero;
         m_Rigidbody.angularVelocity = 0f;
 
+        // place projectile back in pool by calling its release function
         projectilePool.Release(this);
     }
 }
