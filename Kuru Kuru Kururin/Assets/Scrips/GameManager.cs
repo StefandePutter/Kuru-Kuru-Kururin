@@ -10,8 +10,7 @@ public enum GameState
 }
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject gameOverScreen;
-    [SerializeField] private GameObject winScreen;
+    private GameObject gameOverScreen;
 
     public GameState gameState;
 
@@ -30,12 +29,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // check player
-        if (player.state == PlayerState.died)
+        // check player call functions once
+        if (player.state == PlayerState.died && gameState != GameState.gameOver)
         {
             GameOver();
         }
-        if (player.state == PlayerState.won)
+        if (player.state == PlayerState.won && gameState != GameState.won)
         {
             Won();
         }
@@ -44,8 +43,8 @@ public class GameManager : MonoBehaviour
         {
             if (inputManager.isUsingSpecial) 
             {                
-                gameOverScreen.SetActive(false);
-                
+                Destroy(gameOverScreen);
+
                 player.Respawn();
 
                 gameState = GameState.playing;
@@ -74,16 +73,24 @@ public class GameManager : MonoBehaviour
 
     public void Won()
     {
-        gameState = GameState.won;
+        // only want to do once
+        if (gameState == GameState.won)
+        {
+            return;
+        }
+        
+        // save data in json
+        SaveLoad.SaveLevel(SceneManager.GetActiveScene().buildIndex);
 
-        winScreen.SetActive(true);
+        Instantiate(Resources.Load<GameObject>("PreFabs/Win"));
+        gameState = GameState.won;
     }
 
     public void GameOver()
     {
+        gameOverScreen = Instantiate(Resources.Load<GameObject>("PreFabs/GameOver"));
+
         gameState = GameState.gameOver;
-        
-        gameOverScreen.SetActive(true);
 
         // to show school what i had first
         // reload current scene

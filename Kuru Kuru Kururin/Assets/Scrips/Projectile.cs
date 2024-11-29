@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour
     }
 
     // coroutines are defined with an IEnumerator has to be called with StartCoroutine
-    IEnumerator DisableAfterSeconds(float seconds)
+    private IEnumerator DisableAfterSeconds(float seconds)
     {
         // wait until time have gone by
         yield return new WaitForSeconds(seconds);

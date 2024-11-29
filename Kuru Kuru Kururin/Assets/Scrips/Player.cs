@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Specialized;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public enum PlayerState
 {
@@ -29,6 +31,7 @@ public class Player : MonoBehaviour
     private InputManager input;
     private ProjectileSpawner projectileSpawner;
     private Rigidbody2D m_Rigidbody;
+    private Light2D m_Light;
 
     void Start()
     {
@@ -36,6 +39,7 @@ public class Player : MonoBehaviour
 
         // get/set all objects
         m_Rigidbody = GetComponent<Rigidbody2D>();
+        m_Light = GetComponent<Light2D>();
 
         GameObject inp = GameObject.Find("InputManager");
         input = inp.GetComponent<InputManager>();
@@ -56,6 +60,8 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
+        StartCoroutine(LightAnimation(2f));
     }
 
     private void FixedUpdate()
@@ -83,7 +89,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+
         switch (collision.gameObject.name)
         {
             case "Finish":
@@ -97,7 +103,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.name == "Projectile" || Time.time < hitFramesTime)
+        if (collision.gameObject.name == "Projectile" || Time.time < hitFramesTime || state != PlayerState.playing)
         {
             return;
         }
@@ -153,5 +159,19 @@ public class Player : MonoBehaviour
         }
         cooldownTime = Time.time + 0.5f;
         transform.position = respawnPoint;
+    }
+
+    private IEnumerator LightAnimation(float totalTime)
+    {
+        float currentTime = 0;
+        while(currentTime < totalTime)
+        {
+            var someValueFrom0To1 = currentTime/totalTime;
+            float light = Mathf.Lerp(15f, 2.8f, someValueFrom0To1);
+            m_Light.pointLightOuterRadius = light;
+
+            currentTime += Time.deltaTime;
+            yield return null;
+        }
     }
 }
