@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
                 int sceneAmount = SceneManager.sceneCountInBuildSettings;
                 int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
 
+                // when reached last level go back to menu else go next level
                 if (currentSceneIndex == sceneAmount-1)
                 {
                     SceneManager.LoadScene("Menu");
